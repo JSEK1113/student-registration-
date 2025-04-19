@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Registration</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #88aed0;
+      padding: 2rem;
+    }
+    h1 {
+    color: white;
+    }
+    h2 {
+    color: white;
+    }
+    th {
+    color: white;
+    }
+    input {
+    background-color: #AECBD6;
+     color: white; 
+     border: 1px solid white; 
+      background-color: #AECBD6;
+      border-radius: 5px; 
+       padding: 0.5rem;
+     margin: 0.5rem 0;
+     width: 300px;
+    } 
+    button {
+      padding: 0.5rem 1rem;
+      margin-top: 0.6rem;
+      color: white;
+      border: 1px solid white;
+      border-radius: 5px;
+      background-color: #AECBD6;
+     display: block;
+    }
+  input::placeholder {
+    color: white;
+  }   
+    table {
+      margin-top: 2rem;
+      width: 100%;
+      border: 1px solid white; 
+      background-color: #AECBD6;
+      border-radius: 5px; 
+      color: white;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid white;
+      text-align: left;
+    }
+    th {
+      background-color: #AECBD6;
+    } 
+    .remove-btn {
+      background-color: #99c5c4;
+      color: white;
+      border: white;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Student Registration</h1>
+
+  <input type="text" id="first-name" placeholder="First Name" />
+  <input type="text" id="last-name" placeholder="Last Name" />
+  <input type="number" id="age" placeholder="Age" />
+  <input type="text" id="grade" placeholder="Grade" />
+  <button onclick="registerStudent()">Register Student</button>
+
+  <h2>Registered Students</h2>
+  <table id="student-table">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Grade</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    let students = [];
+
+    function saveToLocalStorage() {
+      localStorage.setItem('students', JSON.stringify(students));
+    }
+
+    function loadFromLocalStorage() {
+      const data = localStorage.getItem('students');
+      if (data) {
+        students = JSON.parse(data);
+        updateTable();
+      }
+    }
+
+    function registerStudent() {
+      const fName = document.getElementById('first-name').value.trim();
+      const lName = document.getElementById('last-name').value.trim();
+      const studentAge = document.getElementById('age').value.trim();
+      const studentGrade = document.getElementById('grade').value.trim();
+
+      if (fName && lName && studentAge && studentGrade) {
+        const student = {
+          firstName: fName,
+          lastName: lName,
+          age: studentAge,
+          grade: studentGrade
+        };
+
+        students.push(student);
+        saveToLocalStorage();
+        updateTable();
+
+        // Clear input fields
+        document.getElementById('first-name').value = '';
+        document.getElementById('last-name').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('grade').value = '';
+      } else {
+        alert("Please fill in all fields.");
+      }
+    }
+
+    function removeStudent(index) {
+      students.splice(index, 1);
+      saveToLocalStorage();
+      updateTable();
+    }
+
+    function updateTable() {
+      const tbody = document.getElementById('student-table').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = '';
+
+      students.forEach((student, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.firstName}</td>
+          <td>${student.lastName}</td>
+          <td>${student.age}</td>
+          <td>${student.grade}</td>
+          <td><button class="remove-btn" onclick="removeStudent(${index})">Remove</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Load saved data on page load
+    window.onload = loadFromLocalStorage;
+  </script>
+</body>
+</html>
